@@ -27,6 +27,7 @@ az_env(){
   MI="id-swa-$ENV${LAB_ID:+-$LAB_ID}"   # user-assigned managed identity
   FIC="fic-swa-$ENV"                    # federated identity credential on that identity
   KV_SECRET="swa-$ENV-demo"             # Key Vault secret this environment may read
+  local k="${ENV^^}_KV_NAME"; KV=${!k:-$KV_NAME}   # vault of this env: PROD_KV_NAME / DEV_KV_NAME, else the shared KV_NAME
   AST="state/$ENV"; mkdir -p "$AST"
   # Client id / tenant id: from config.env (Portal route) or written by 10-azure-setup.sh (CLI route)
   local v="${ENV^^}_CLIENT_ID"; CLIENT_ID=${!v:-}; TENANT_ID=${AZ_TENANT_ID:-}

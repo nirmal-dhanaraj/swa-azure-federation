@@ -9,7 +9,7 @@ for e in ${1:-$ENVS}; do
   cat <<EOF
 
 ${B}================ $ENV ================${N}
-${B}Key Vault secret${N}            name: $KV_SECRET   (any value, e.g. hello-from-azure-$ENV)
+${B}Key Vault secret${N}            vault: $KV   name: $KV_SECRET   (any value, e.g. hello-from-azure-$ENV)
 ${B}Managed identity${N}            name: $MI   resource group: $AZ_RG   region: $AZ_LOCATION
 ${B}Federated credential${N}        (identity -> Settings -> Federated credentials -> Add credential)
   Federated credential scenario: Other

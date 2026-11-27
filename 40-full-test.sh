@@ -11,7 +11,9 @@ token_for(){ # token_for <jwt> <env-of-identity> -> sets TOK (empty on failure) 
   exchange "$1" "$cid" "$tid"
   if [ "$HTTP" = 200 ]; then TOK=$(jq -r .access_token <<<"$BODY"); else ERR=$(jq -r '.error_description // .error' <<<"$BODY" | grep -o 'AADSTS[0-9]*' | head -1); ERR=${ERR:-HTTP $HTTP}; fi
 }
-kv(){ curl -sS -m 20 -o /dev/null -w '%{http_code}' -H "Authorization: Bearer $1" "https://$KV_NAME.vault.azure.net/secrets/$2?api-version=7.4" || echo 000; }
+kv(){ # kv <token> <env-of-secret>: HTTP code of reading swa-<env>-demo from that env's vault
+  local v; az_env "$2"; v=$KV; az_env "$CUR_ENV"
+  curl -sS -m 20 -o /dev/null -w '%{http_code}' -H "Authorization: Bearer $1" "https://$v.vault.azure.net/secrets/swa-$2-demo?api-version=7.4" || echo 000; }
 okdeny(){ [ "$1" = "$2" ] && echo OK || echo DENY; }
 
 for e in prod dev; do az_env $e; need_state; done
@@ -23,8 +25,8 @@ for e in prod dev; do
   echo "${B}== $ENV ($WL, $MI)${N}"
   token_for "${JWT[$e]}" $e; T=$TOK
   res "$e JWT -> $e identity: Entra token"            OK   "$([ -n "$T" ] && echo OK || echo DENY)" "$ERR"
-  res "$e token -> Key Vault secret swa-$e-demo"      OK   "$(okdeny "$(kv "$T" "swa-$e-demo")" 200)" ""
-  res "$e token -> Key Vault secret swa-$o-demo"      DENY "$(okdeny "$(kv "$T" "swa-$o-demo")" 200)" "(403 expected)"
+  res "$e token -> Key Vault secret swa-$e-demo"      OK   "$(okdeny "$(kv "$T" $e)" 200)" ""
+  res "$e token -> Key Vault secret swa-$o-demo"      DENY "$(okdeny "$(kv "$T" $o)" 200)" "(403 expected)"
   token_for "${JWT[$e]}" $o
   res "$e JWT -> $o identity (other subject/issuer)"  DENY "$([ -n "$TOK" ] && echo OK || echo DENY)" "$ERR"
   token_for "$(fetch_jwt conjur)" $e

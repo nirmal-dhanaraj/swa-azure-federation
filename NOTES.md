@@ -26,6 +26,9 @@ the CyberArk page "Authenticate workloads with SPIFFE → Azure" (ccl-swa-azure.
 - Key Vault `kv-swa-nirmal01` created in **existing** RG `rg-nirmal-lab` (Australia East, RBAC, soft-delete 7 days,
   no purge protection), network: selected networks = VM VNet/subnet (service endpoint) + user's client IP.
 - `99-cleanup.sh` changed: never deletes the resource group (it may hold the VM), only identities + Key Vault.
+- User has **Contributor** only on the subscription: cannot do role assignments ("operation is not allowed by RBAC").
+  Options: admin does the role assignments, or one vault per environment with **Vault access policy** model
+  (scripts now support `PROD_KV_NAME` / `DEV_KV_NAME`).
 
 ## Next steps
 

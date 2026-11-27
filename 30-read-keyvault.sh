@@ -8,7 +8,7 @@ az_env "$1"; NAME=${2:-$KV_SECRET}
 EXP=$(jwt_payload "$(cat "$AST/azure_token")" | jq -r .exp)
 [ "$EXP" -gt $(( $(date +%s) + 60 )) ] || ./20-get-azure-token.sh "$ENV" >/dev/null || exit 1
 
-URL="https://$KV_NAME.vault.azure.net/secrets/$NAME?api-version=7.4"
+URL="https://$KV.vault.azure.net/secrets/$NAME?api-version=7.4"
 echo "GET $URL   (as $MI)"
 F=$(mktemp); CODE=$(curl -sS -m 20 -o "$F" -w '%{http_code}' -H "Authorization: Bearer $(cat "$AST/azure_token")" "$URL" || echo 000)
 BODY=$(cat "$F"); rm -f "$F"

@@ -119,6 +119,11 @@ Wait 1–5 minutes: Azure needs time to apply new federated credentials and role
    → Managed identity → `id-swa-<env>...`.
 5. In `config.env`: `AZ_TENANT_ID` (Microsoft Entra ID → Overview), `PROD_CLIENT_ID`, `DEV_CLIENT_ID`, `KV_NAME`.
 
+**Only Contributor (cannot assign roles)?** Steps 1 and 4 are role assignments, which need Owner / User Access
+Administrator. Self-service alternative: create **one Key Vault per environment** with permission model
+**Vault access policy**, add access policies (yourself: secret management; `id-swa-<env>...`: secret **Get** only, on
+its own vault), and set `PROD_KV_NAME` / `DEV_KV_NAME` in `config.env`. Each identity can then read only its own vault.
+
 ### 3.4 Try it
 
 ```bash
