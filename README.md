@@ -2,8 +2,9 @@
 
 ![Workload identity federation: CyberArk Secure Workload Access to Microsoft Azure](docs/architecture.svg)
 
-<sub>PNG for slides / email: [docs/architecture.png](docs/architecture.png) · detailed lab diagram (names, ports,
-denied cases): [docs/architecture-lab.svg](docs/architecture-lab.svg)</sub>
+<sub>PNG for slides / email: [docs/architecture.png](docs/architecture.png) · any-platform version:
+[docs/architecture-generic.svg](docs/architecture-generic.svg) · detailed lab diagram (names, ports, denied cases):
+[docs/architecture-lab.svg](docs/architecture-lab.svg)</sub>
 
 Lab for the CyberArk use case **"Authenticate workloads with SPIFFE → Azure"**
 ([CyberArk docs](https://docs.cyberark.com/secrets-manager-saas/latest/en/content/conjurcloud/ccl-swa-azure.htm)):
