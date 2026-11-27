@@ -14,7 +14,7 @@
   </defs>
   <rect width="1400" height="840" fill="#fff"/>
 
-  <text x="30" y="40" font-size="22" font-weight="700">Workload identity federation: CyberArk Secure Workload Access → Microsoft Azure</text>
+  <text x="30" y="40" font-size="22" font-weight="700">Workload identity federation: Idira Secure Workload Access → Microsoft Azure</text>
   <text x="30" y="64" class="zs" font-size="13.5">A workload uses its attested SPIFFE identity to get an Azure access token, with no stored secrets.</text>
 
   <!-- Zone A: customer environment -->
@@ -41,9 +41,9 @@
   <text x="467" y="495" class="bd" text-anchor="middle">SPIFFE identities</text>
   <text x="467" y="514" class="bs" text-anchor="middle">(JWT-SVID)</text>
 
-  <!-- CyberArk -->
+  <!-- Idira -->
   <rect x="630" y="90" width="370" height="175" rx="12" fill="#ebf4ff" stroke="#2b6cb0" stroke-width="1.5"/>
-  <text x="815" y="122" class="zt" text-anchor="middle">CyberArk</text>
+  <text x="815" y="122" class="zt" text-anchor="middle">Idira</text>
   <text x="815" y="143" class="bd" text-anchor="middle" font-weight="600">Secure Workload Access (SaaS)</text>
   <text x="815" y="175" class="bd" text-anchor="middle">Trust domain = OIDC issuer</text>
   <text x="815" y="196" class="bd" text-anchor="middle">publishes its public signing keys</text>
@@ -87,7 +87,7 @@
   <!-- 3 workload -> Entra -->
   <path d="M315,228 L647,415" class="ln" marker-end="url(#a)"/>
   <circle cx="480" cy="321" r="13" fill="#2b6cb0"/><text x="480" y="326" class="n" text-anchor="middle">3</text>
-  <!-- 4 Entra -> CyberArk keys -->
+  <!-- 4 Entra -> Idira keys -->
   <path d="M820,370 L820,268" class="ln" marker-end="url(#a)"/>
   <circle cx="820" cy="286" r="13" fill="#2b6cb0"/><text x="820" y="291" class="n" text-anchor="middle">4</text>
   <!-- 5 Entra -> workload -->
@@ -108,7 +108,7 @@
     <circle cx="62" cy="701" r="11" fill="#2b6cb0"/><text x="62" y="705.5" class="n" text-anchor="middle" font-size="12">3</text>
     <text x="84" y="706">The workload presents the JWT-SVID to Entra ID to sign in as the managed identity.</text>
     <circle cx="62" cy="731" r="11" fill="#2b6cb0"/><text x="62" y="735.5" class="n" text-anchor="middle" font-size="12">4</text>
-    <text x="84" y="736">Entra ID matches it to the federated credential and verifies it with CyberArk's public keys.</text>
+    <text x="84" y="736">Entra ID matches it to the federated credential and verifies it with Idira's public keys.</text>
     <circle cx="62" cy="761" r="11" fill="#2b6cb0"/><text x="62" y="765.5" class="n" text-anchor="middle" font-size="12">5</text>
     <text x="84" y="766">Entra ID returns a short-lived Azure access token.</text>
     <circle cx="62" cy="791" r="11" fill="#2b6cb0"/><text x="62" y="795.5" class="n" text-anchor="middle" font-size="12">6</text>
@@ -119,7 +119,7 @@
   <text x="790" y="615" class="bt">One-time setup</text>
   <g class="lg">
     <circle cx="802" cy="641" r="11" fill="#718096"/><text x="802" y="645.5" class="n" text-anchor="middle" font-size="12">A</text>
-    <text x="824" y="646">CyberArk: deploy the SWA Server and agents, and define</text>
+    <text x="824" y="646">Idira: deploy the SWA Server and agents, and define</text>
     <text x="824" y="666">which workloads may receive an identity.</text>
     <circle cx="802" cy="701" r="11" fill="#718096"/><text x="802" y="705.5" class="n" text-anchor="middle" font-size="12">B</text>
     <text x="824" y="706">Entra ID: create a managed identity with a federated</text>

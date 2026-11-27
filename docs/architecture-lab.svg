@@ -15,7 +15,7 @@
   <rect width="1500" height="1090" fill="#ffffff"/>
 
   <!-- Title -->
-  <text x="30" y="34" font-size="20" font-weight="700">CyberArk Secure Workload Access (SPIFFE) → Microsoft Entra ID → Azure Key Vault</text>
+  <text x="30" y="34" font-size="20" font-weight="700">Idira Secure Workload Access (SPIFFE) → Microsoft Entra ID → Azure Key Vault</text>
   <text x="30" y="56" class="s" font-size="12.5">Lab: github.com/nirmal-dhanaraj/swa-azure-federation · the workload holds no password, key or client secret · prod shown in detail, dev is identical with its own names</text>
 
   <!-- ===== Azure VM ===== -->
@@ -71,9 +71,9 @@
   <text x="370" y="691" class="m">  ng-prod/workload/swa-demo-sa</text>
   <text x="370" y="705" class="deny" font-size="10.5">✗ root in wl-prod → no JWT-SVID</text>
 
-  <!-- ===== CyberArk tenant ===== -->
+  <!-- ===== Idira tenant ===== -->
   <rect x="720" y="80" width="750" height="210" rx="10" fill="#ebf4ff" stroke="#2b6cb0" stroke-width="1.5"/>
-  <text x="735" y="102" class="t">CyberArk Secrets Manager SaaS — Secure Workload Access</text>
+  <text x="735" y="102" class="t">Idira Secrets Manager SaaS — Secure Workload Access</text>
   <text x="1455" y="102" class="s" text-anchor="end">&lt;tenant&gt;.secretsmgr.cyberark.cloud</text>
   <rect x="735" y="118" width="350" height="160" rx="6" fill="#fff" stroke="#2b6cb0"/>
   <text x="750" y="140" class="h">Trust domain prod.mylab.swa.example.com</text>
@@ -193,7 +193,7 @@
   </g>
 
   <line x1="50" y1="985" x2="1450" y2="985" stroke="#cbd5e0"/>
-  <text x="50" y="1008" class="h">Same pattern as CyberArk's AWS guide</text>
+  <text x="50" y="1008" class="h">Same pattern as Idira's AWS guide</text>
   <text x="50" y="1028">AWS IAM OIDC identity provider + role trust policy  →  Entra federated identity credential (issuer / subject / audience)</text>
   <text x="50" y="1046">AWS IAM role  →  user-assigned managed identity   ·   STS AssumeRoleWithWebIdentity  →  Entra token endpoint with client_assertion</text>
   <text x="50" y="1064">AWS policy on S3 / Secrets Manager  →  Key Vault access policy (or RBAC role "Key Vault Secrets User" on a single secret)</text>

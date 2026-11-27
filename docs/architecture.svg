@@ -47,9 +47,9 @@
   <text x="510" y="284" class="bx" text-anchor="middle">SWA</text>
   <text x="510" y="310" class="bx" text-anchor="middle">Server</text>
 
-  <!-- ===== CyberArk SaaS ===== -->
+  <!-- ===== Idira SaaS ===== -->
   <rect x="628" y="228" width="214" height="134" rx="8" fill="#fff" stroke="#2b6cb0" stroke-width="1.6"/>
-  <text x="735" y="261" text-anchor="middle" font-size="19" font-weight="700" fill="#1a365d">CyberArk</text>
+  <text x="735" y="261" text-anchor="middle" font-size="19" font-weight="700" fill="#1a365d">Idira</text>
   <text x="735" y="286" text-anchor="middle" font-size="15.5">Secure Workload</text>
   <text x="735" y="306" text-anchor="middle" font-size="15.5">Access (SaaS)</text>
   <text x="735" y="338" text-anchor="middle" font-size="12.5" fill="#4a5568">OIDC issuer · public keys</text>
@@ -108,7 +108,7 @@
   <path d="M100,185 L100,460 L897,460" class="ln" marker-end="url(#a)"/>
   <circle cx="470" cy="490" r="15" fill="#0078d4"/><text x="470" y="496" class="n" text-anchor="middle">5</text>
 
-  <!-- dashed: SWA Server -> CyberArk ; Entra -> CyberArk public keys -->
+  <!-- dashed: SWA Server -> Idira ; Entra -> Idira public keys -->
   <path d="M575,295 L625,295" class="dl" marker-end="url(#g)"/>
   <path d="M935,255 L935,295 L845,295" class="dl" marker-end="url(#g)"/>
 
@@ -121,7 +121,7 @@
     <text x="56" y="607">The agent attests the workload; the SWA Server issues a signed, short-lived JWT-SVID (its SPIFFE ID).</text>
     <circle cx="36" cy="630" r="11" fill="#0078d4"/><text x="36" y="635" class="n" font-size="13" text-anchor="middle">3</text>
     <text x="56" y="635">The workload presents the JWT-SVID to Entra ID for the managed identity. Entra checks it against the federated credential</text>
-    <text x="56" y="654">(issuer, SPIFFE ID, audience) and verifies its signature with CyberArk's public keys (dashed line).</text>
+    <text x="56" y="654">(issuer, SPIFFE ID, audience) and verifies its signature with Idira's public keys (dashed line).</text>
     <circle cx="36" cy="680" r="11" fill="#0078d4"/><text x="36" y="685" class="n" font-size="13" text-anchor="middle">4</text>
     <text x="56" y="685">Entra ID returns a short-lived Azure access token. No secret is stored anywhere.</text>
     <circle cx="36" cy="708" r="11" fill="#0078d4"/><text x="36" y="713" class="n" font-size="13" text-anchor="middle">5</text>
