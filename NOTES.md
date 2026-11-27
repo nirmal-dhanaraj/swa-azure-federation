@@ -29,6 +29,9 @@ the CyberArk page "Authenticate workloads with SPIFFE → Azure" (ccl-swa-azure.
 - User has **Contributor** only on the subscription: cannot do role assignments ("operation is not allowed by RBAC").
   Options: admin does the role assignments, or one vault per environment with **Vault access policy** model
   (scripts now support `PROD_KV_NAME` / `DEV_KV_NAME`).
+- **18:39 – token exchange works for prod**: `./20-get-azure-token.sh prod` → HTTP 200, Entra token for
+  `id-swa-prod-mylab` (~24 h). **RS512 JWT-SVIDs are accepted by Entra** (risk closed). Using access-policy vaults
+  `kv-swa-nirmal-prod` / `kv-swa-nirmal-dev`.
 
 ## Next steps
 
@@ -46,6 +49,6 @@ the CyberArk page "Authenticate workloads with SPIFFE → Azure" (ccl-swa-azure.
 - **Issuer discovery**: assumed the issuer is the trust domain URL (`<tenant>/api/swa/trust-domains/<td>`, as the
   SWA lab's authn-jwt uses) and that it serves `/.well-known/openid-configuration` publicly. `00` checks; the scripts
   always use the `iss` from a real JWT, so only reachability matters.
-- **Signing algorithm**: the SWA lab saw RS512 JWT-SVIDs. If Entra rejects that algorithm, the exchange fails with a
+- ~~**Signing algorithm**~~ (resolved 2026-11-27: Entra accepted RS512): the SWA lab saw RS512 JWT-SVIDs. If Entra rejects that algorithm, the exchange fails with a
   signature error → check the CyberArk docs for a setting on the trust domain / JWT key type.
 - Role assignments and federated credentials take 1–5 minutes to apply; retry before debugging.
