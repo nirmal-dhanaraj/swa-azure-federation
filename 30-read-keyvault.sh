@@ -4,9 +4,9 @@
 source "$(dirname "$0")/lib.sh"
 [ $# -ge 1 ] || die "usage: $0 <prod|dev> [secret-name]"
 az_env "$1"; NAME=${2:-$KV_SECRET}
-[ -s "$AST/azure_token" ] || ./20-get-azure-token.sh "$ENV" >/dev/null || exit 1
-EXP=$(jwt_payload "$(cat "$AST/azure_token")" | jq -r .exp)
-[ "$EXP" -gt $(( $(date +%s) + 60 )) ] || ./20-get-azure-token.sh "$ENV" >/dev/null || exit 1
+get_token(){ local out; out=$(./20-get-azure-token.sh "$ENV" 2>&1) || { echo "$out" | sed -n '/HTTP/,$p'; die "could not get an Azure token for $ENV (see above)"; }; }
+EXP=$(jwt_payload "$(cat "$AST/azure_token" 2>/dev/null)" 2>/dev/null | jq -r '.exp // 0' 2>/dev/null || echo 0)
+[ "${EXP:-0}" -gt $(( $(date +%s) + 60 )) ] || get_token
 
 URL="https://$KV.vault.azure.net/secrets/$NAME?api-version=7.4"
 echo "GET $URL   (as $MI)"
