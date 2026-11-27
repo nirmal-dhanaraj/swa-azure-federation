@@ -32,14 +32,21 @@ the CyberArk page "Authenticate workloads with SPIFFE → Azure" (ccl-swa-azure.
 - **18:39 – token exchange works for prod**: `./20-get-azure-token.sh prod` → HTTP 200, Entra token for
   `id-swa-prod-mylab` (~24 h). **RS512 JWT-SVIDs are accepted by Entra** (risk closed). Using access-policy vaults
   `kv-swa-nirmal-prod` / `kv-swa-nirmal-dev`.
+- **18:50 – DONE: `./40-full-test.sh` = 12/12 PASS** (prod + dev: token OK, own secret OK, other env's vault 403,
+  other identity AADSTS700211, aud=conjur AADSTS700212, root denied by SWA node group policy).
+- Lessons: the issuer host is the CyberArk tenant (`tiger-prod.secretsmgr...`) for **both** environments, only
+  `trust-domains/<td>` differs (a `tiger-dev` typo gave AADSTS700211); secret names must match exactly
+  (`swa-dev-demo` missing gave 404). Tenant ID without Entra access: Key Vault Overview → Directory ID.
 
 ## Next steps
 
-- [ ] Deploy the SWA lab in `swa-lab/` first (swa-lab/README.md, open items in swa-azure-lab's NOTES.md) → 9/9 PASS
-- [ ] On the VM: clone this repo, install Azure CLI, `az login --use-device-code`
-- [ ] `cp config.env.example config.env`, set `KV_NAME`, run `./00-check-prereq.sh` until all OK
-- [ ] `./10-azure-setup.sh prod && ./10-azure-setup.sh dev`, wait a few minutes
-- [ ] `./20-get-azure-token.sh prod`, `./30-read-keyvault.sh prod`, `./40-full-test.sh` → expect 12/12 PASS
+- [x] SWA lab running (existing test-swa-docker on the VM)
+- [x] Clone this repo on the VM, `config.env`, `./00-check-prereq.sh` all OK
+- [x] Azure objects via the Portal (identities, federated credentials, two access-policy vaults)
+- [x] `./20`, `./30`, `./40-full-test.sh` → **12/12 PASS**
+- [ ] Optional: ask an admin for role assignments to use the RBAC single-vault design from the CyberArk docs
+- [ ] Optional: production-style client (Azure SDK / go-spiffe with its own pinned-hash policy) instead of the swa-agent CLI
+- [ ] When done: delete the two identities and the vaults in the Portal (keep `rg-nirmal-lab`)
 
 ## Open risks
 
