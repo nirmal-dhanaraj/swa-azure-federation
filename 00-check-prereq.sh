@@ -5,11 +5,13 @@ source "$(dirname "$0")/lib.sh"
 FAIL=0; bad(){ miss "$*"; FAIL=1; }
 
 echo "${B}[1] Tools${N}"
-for t in docker jq curl az; do
+for t in docker jq curl; do
   if command -v $t >/dev/null; then ok "$t"; else
     case $t in az) bad "az  -> curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash";; *) bad "$t -> sudo apt-get install -y $t";; esac
   fi
 done
+
+command -v az >/dev/null && ok "az (optional)" || warn "az not installed: fine for the Portal route; needed only for 10-azure-setup.sh / 99-cleanup.sh"
 
 echo "${B}[2] Config${N}"
 grep -q '<unique>' <<<"$KV_NAME" && bad "KV_NAME still has <unique> in config.env" || ok "KV_NAME=$KV_NAME"
@@ -20,7 +22,11 @@ if command -v az >/dev/null && az account show >/dev/null 2>&1; then
   [ -n "$AZ_SUBSCRIPTION" ] && az account set -s "$AZ_SUBSCRIPTION" 2>/dev/null
   ok "subscription: $(az account show --query '[name,id]' -o tsv | paste -sd' ')"
   ok "tenant:       $(az account show --query tenantId -o tsv)"
-else bad "not logged in -> az login --use-device-code"; fi
+else warn "az not logged in: fine for the Portal route (needed only for 10-azure-setup.sh)"; fi
+for e in $ENVS; do az_env "$e"
+  [ -n "$CLIENT_ID" ] && [ -n "$TENANT_ID" ] && ok "$ENV: tenant $TENANT_ID client $CLIENT_ID" \
+    || warn "$ENV: no client id / tenant id yet (Portal: set AZ_TENANT_ID, ${ENV^^}_CLIENT_ID in config.env; CLI: ./10-azure-setup.sh $ENV)"
+done
 
 for e in $ENVS; do
   az_env "$e"

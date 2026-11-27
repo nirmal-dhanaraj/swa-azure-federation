@@ -5,7 +5,7 @@
 source "$(dirname "$0")/lib.sh"
 [ $# = 1 ] || die "usage: $0 <prod|dev>"
 az_env "$1"; need_state
-CLIENT_ID=$(cat "$AST/client_id"); TENANT=$(cat "$AST/tenant_id")
+TENANT=$TENANT_ID
 short(){ [ "${SHOW_JWT:-0}" = 1 ] && echo "$1" || echo "${1:0:30}...${1: -15} (${#1} bytes; SHOW_JWT=1 to print)"; }
 
 echo "${B}1. Workload asks its local SWA agent for a JWT-SVID with the Azure audience${N}"

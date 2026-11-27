@@ -28,6 +28,10 @@ az_env(){
   FIC="fic-swa-$ENV"                    # federated identity credential on that identity
   KV_SECRET="swa-$ENV-demo"             # Key Vault secret this environment may read
   AST="state/$ENV"; mkdir -p "$AST"
+  # Client id / tenant id: from config.env (Portal route) or written by 10-azure-setup.sh (CLI route)
+  local v="${ENV^^}_CLIENT_ID"; CLIENT_ID=${!v:-}; TENANT_ID=${AZ_TENANT_ID:-}
+  [ -n "$CLIENT_ID" ] || CLIENT_ID=$(cat "$AST/client_id" 2>/dev/null || true)
+  [ -n "$TENANT_ID" ] || TENANT_ID=$(cat "$AST/tenant_id" 2>/dev/null || true)
 }
 
 # fetch_jwt <aud> [user]: ask the agent inside the workload container for a JWT-SVID; prints the JWT or nothing.
@@ -52,4 +56,4 @@ exchange(){
   BODY=$(cat "$f"); rm -f "$f"
 }
 
-need_state(){ [ -s "$AST/client_id" ] && [ -s "$AST/tenant_id" ] || die "no Azure identity for $ENV yet -> ./10-azure-setup.sh $ENV"; }
+need_state(){ [ -n "$CLIENT_ID" ] && [ -n "$TENANT_ID" ] || die "no Azure identity for $ENV yet: set AZ_TENANT_ID and ${ENV^^}_CLIENT_ID in config.env (Portal) or run ./10-azure-setup.sh $ENV (CLI)"; }

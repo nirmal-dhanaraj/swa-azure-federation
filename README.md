@@ -105,6 +105,20 @@ nano config.env          # set KV_NAME (globally unique), check AZ_LOCATION, LAB
 
 Wait 1–5 minutes: Azure needs time to apply new federated credentials and role assignments.
 
+### 3.3b Or: create the Azure side in the Azure Portal (no Azure CLI needed)
+
+`./11-portal-values.sh` prints the exact names, issuer and subject to type in. Per environment:
+
+1. **Key Vault** (once): Create → resource group `rg-swa-federation`, name = `KV_NAME`, permission model
+   **Azure role-based access control**. Then Key Vault → Access control (IAM) → Add role assignment →
+   **Key Vault Secrets Officer** → yourself (so you can add secrets). Secrets → Generate/Import `swa-prod-demo`, `swa-dev-demo`.
+2. **Managed Identities** → Create `id-swa-<env>[-LAB_ID]` in the same resource group. Copy its **Client ID**.
+3. Identity → Settings → **Federated credentials** → Add credential → scenario **Other** → Issuer URL, Subject
+   identifier, Name, Audience `api://AzureADTokenExchange` as printed by `11`.
+4. Key Vault → Secrets → `swa-<env>-demo` → **Access control (IAM)** → Add role assignment → **Key Vault Secrets User**
+   → Managed identity → `id-swa-<env>...`.
+5. In `config.env`: `AZ_TENANT_ID` (Microsoft Entra ID → Overview), `PROD_CLIENT_ID`, `DEV_CLIENT_ID`, `KV_NAME`.
+
 ### 3.4 Try it
 
 ```bash
@@ -132,10 +146,11 @@ Expected matrix (per environment, shown for prod):
 | `lib.sh` | Loads the SWA lab's settings (`env_load`), `fetch_jwt`, `exchange` (JWT-SVID → Entra token) |
 | `00-check-prereq.sh` | Tools, `az login`, workload containers, live JWT-SVID, issuer discovery + JWKS reachable. Reports only |
 | `10-azure-setup.sh <env>` | Resource group, Key Vault (RBAC) + demo secret, managed identity, federated credential, role on the secret |
+| `11-portal-values.sh [env]` | Portal route: print the values to type into the Azure Portal (issuer, subject, names) |
 | `20-get-azure-token.sh <env>` | Explained exchange; caches the Azure token in `state/<env>/azure_token` (mode 600) |
 | `30-read-keyvault.sh <env> [secret]` | Read a Key Vault secret with the cached token (`SHOW=1` prints the value) |
 | `40-full-test.sh` | 12-case allow/deny matrix |
-| `99-cleanup.sh [env\|all]` | Remove one environment's identity, or the whole resource group (purges the Key Vault) |
+| `99-cleanup.sh [env\|all]` | Remove one environment's identity, or both + the Key Vault (purged). Never deletes the resource group |
 | `swa-lab/` | The SWA lab (from test-swa-docker, Azure-adapted); its own scripts and README |
 
 ## 5. Manual commands (what the scripts do)
@@ -176,4 +191,4 @@ curl -s -X POST https://login.microsoftonline.com/<tenant-id>/oauth2/v2.0/token 
 - One managed identity can have **at most 20 federated credentials**; issuer and subject are matched **exactly**
   (case-sensitive).
 - JWT-SVIDs live ~5 minutes; the Azure token ~1 hour. Request a new JWT-SVID for each exchange.
-- Clean up with `./99-cleanup.sh all` when done (a Key Vault costs very little, but the identity is a live trust).
+- Clean up with `./99-cleanup.sh all` when done (identities + Key Vault only; the resource group is kept). Portal route: delete the two identities and the Key Vault by hand.

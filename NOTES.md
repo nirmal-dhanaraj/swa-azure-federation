@@ -17,6 +17,16 @@ the CyberArk page "Authenticate workloads with SPIFFE → Azure" (ccl-swa-azure.
 3. Same day: copied every test-swa-docker file the workflow needs into `swa-lab/` (Azure-adapted versions from
    swa-azure-lab; not `docs/`). `LAB_DIR` now defaults to `./swa-lab`; `push-to-vm.sh` targets `~/swa-azure-federation/swa-lab`.
 
+## Session 2 (2026-11-27)
+
+- Using the **already running test-swa-docker lab** on the VM (`LAB_DIR=/home/ndhanaraj/test-swa-docker`, run as root,
+  LAB_ID `mylab`, trust domains `prod|dev.mylab.swa.example.com`): status OK for prod and dev.
+- Azure objects are created in the **Portal** (no az CLI needed): new `11-portal-values.sh` prints issuer/subject/names;
+  client ids / tenant id go into `config.env` (`AZ_TENANT_ID`, `PROD_CLIENT_ID`, `DEV_CLIENT_ID`).
+- Key Vault `kv-swa-nirmal01` created in **existing** RG `rg-nirmal-lab` (Australia East, RBAC, soft-delete 7 days,
+  no purge protection), network: selected networks = VM VNet/subnet (service endpoint) + user's client IP.
+- `99-cleanup.sh` changed: never deletes the resource group (it may hold the VM), only identities + Key Vault.
+
 ## Next steps
 
 - [ ] Deploy the SWA lab in `swa-lab/` first (swa-lab/README.md, open items in swa-azure-lab's NOTES.md) → 9/9 PASS

@@ -6,7 +6,7 @@ res(){ # res <name> <expected OK|DENY> <actual OK|DENY> <detail>
   TOTAL=$((TOTAL+1)); local c=$R r=FAIL; [ "$2" = "$3" ] && { c=$G; r=PASS; PASS=$((PASS+1)); }
   printf '  %s%-4s%s %-58s expect %-4s got %-4s %s\n' "$c" "$r" "$N" "$1" "$2" "$3" "$4"; }
 token_for(){ # token_for <jwt> <env-of-identity> -> sets TOK (empty on failure) and ERR
-  local cid tid; cid=$(cat "state/$2/client_id"); tid=$(cat "state/$2/tenant_id")
+  local cid tid; az_env "$2"; cid=$CLIENT_ID; tid=$TENANT_ID; az_env "$CUR_ENV"
   TOK=""; ERR=""; [ -n "$1" ] || { ERR="no JWT"; return; }
   exchange "$1" "$cid" "$tid"
   if [ "$HTTP" = 200 ]; then TOK=$(jq -r .access_token <<<"$BODY"); else ERR=$(jq -r '.error_description // .error' <<<"$BODY" | grep -o 'AADSTS[0-9]*' | head -1); ERR=${ERR:-HTTP $HTTP}; fi
@@ -19,7 +19,7 @@ declare -A JWT
 for e in prod dev; do az_env $e; JWT[$e]=$(fetch_jwt "$AZ_AUDIENCE"); done
 
 for e in prod dev; do
-  o=$([ $e = prod ] && echo dev || echo prod); az_env $e
+  o=$([ $e = prod ] && echo dev || echo prod); CUR_ENV=$e; az_env $e
   echo "${B}== $ENV ($WL, $MI)${N}"
   token_for "${JWT[$e]}" $e; T=$TOK
   res "$e JWT -> $e identity: Entra token"            OK   "$([ -n "$T" ] && echo OK || echo DENY)" "$ERR"
