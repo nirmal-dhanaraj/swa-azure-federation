@@ -74,11 +74,11 @@
   <!-- ===== CyberArk tenant ===== -->
   <rect x="720" y="80" width="750" height="210" rx="10" fill="#ebf4ff" stroke="#2b6cb0" stroke-width="1.5"/>
   <text x="735" y="102" class="t">CyberArk Secrets Manager SaaS — Secure Workload Access</text>
-  <text x="1455" y="102" class="s" text-anchor="end">tiger-prod.secretsmgr.cyberark.cloud</text>
+  <text x="1455" y="102" class="s" text-anchor="end">&lt;tenant&gt;.secretsmgr.cyberark.cloud</text>
   <rect x="735" y="118" width="350" height="160" rx="6" fill="#fff" stroke="#2b6cb0"/>
   <text x="750" y="140" class="h">Trust domain prod.mylab.swa.example.com</text>
   <text x="750" y="160">OIDC issuer (= JWT iss):</text>
-  <text x="750" y="176" class="m">https://tiger-prod.secretsmgr.cyberark.cloud</text>
+  <text x="750" y="176" class="m">https://&lt;tenant&gt;.secretsmgr.cyberark.cloud</text>
   <text x="750" y="190" class="m">/api/swa/trust-domains/prod.mylab.swa.example.com</text>
   <text x="750" y="210">publishes /.well-known/openid-configuration</text>
   <text x="750" y="228">+ JWKS publicly → Entra verifies signatures</text>
@@ -96,10 +96,10 @@
   <!-- ===== Entra ID ===== -->
   <rect x="720" y="325" width="750" height="240" rx="10" fill="#f5f0ff" stroke="#6b46c1" stroke-width="1.5"/>
   <text x="735" y="347" class="t">Microsoft Entra ID</text>
-  <text x="1455" y="347" class="s" text-anchor="end">tenant dc5c35ed-… · login.microsoftonline.com/&lt;tenant&gt;/oauth2/v2.0/token</text>
+  <text x="1455" y="347" class="s" text-anchor="end">login.microsoftonline.com/&lt;tenant&gt;/oauth2/v2.0/token</text>
   <rect x="735" y="362" width="350" height="190" rx="6" fill="#fff" stroke="#6b46c1" stroke-width="1.6"/>
   <text x="750" y="384" class="h">Managed identity id-swa-prod-mylab</text>
-  <text x="750" y="402" class="s">user-assigned · client id 0537c285-… · rg-nirmal-lab</text>
+  <text x="750" y="402" class="s">user-assigned · rg-nirmal-lab</text>
   <text x="750" y="426" class="h">Federated credential fic-swa-prod</text>
   <text x="750" y="446" class="m">issuer   = …/trust-domains/prod.mylab.swa.example.com</text>
   <text x="750" y="464" class="m">subject  = spiffe://prod.mylab.swa.example.com/</text>
@@ -109,7 +109,7 @@
   <text x="750" y="538" class="deny">✗ JWT with aud=conjur: AADSTS700212</text>
   <rect x="1105" y="362" width="350" height="190" rx="6" fill="#fff" stroke="#6b46c1"/>
   <text x="1120" y="384" class="h">Managed identity id-swa-dev-mylab</text>
-  <text x="1120" y="402" class="s">user-assigned · client id ddd03023-…</text>
+  <text x="1120" y="402" class="s">user-assigned · </text>
   <text x="1120" y="426" class="h">Federated credential fic-swa-dev</text>
   <text x="1120" y="446" class="m">issuer   = …/trust-domains/dev.mylab.swa.example.com</text>
   <text x="1120" y="464" class="m">subject  = spiffe://dev.mylab.swa.example.com/</text>

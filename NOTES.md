@@ -19,7 +19,7 @@ the CyberArk page "Authenticate workloads with SPIFFE → Azure" (ccl-swa-azure.
 
 ## Session 2 (2026-11-27)
 
-- Using the **already running test-swa-docker lab** on the VM (`LAB_DIR=/home/ndhanaraj/test-swa-docker`, run as root,
+- Using the **already running test-swa-docker lab** on the VM (`LAB_DIR=/home/<user>/test-swa-docker`, run as root,
   LAB_ID `mylab`, trust domains `prod|dev.mylab.swa.example.com`): status OK for prod and dev.
 - Azure objects are created in the **Portal** (no az CLI needed): new `11-portal-values.sh` prints issuer/subject/names;
   client ids / tenant id go into `config.env` (`AZ_TENANT_ID`, `PROD_CLIENT_ID`, `DEV_CLIENT_ID`).
@@ -34,8 +34,8 @@ the CyberArk page "Authenticate workloads with SPIFFE → Azure" (ccl-swa-azure.
   `kv-swa-nirmal-prod` / `kv-swa-nirmal-dev`.
 - **18:50 – DONE: `./40-full-test.sh` = 12/12 PASS** (prod + dev: token OK, own secret OK, other env's vault 403,
   other identity AADSTS700211, aud=conjur AADSTS700212, root denied by SWA node group policy).
-- Lessons: the issuer host is the CyberArk tenant (`tiger-prod.secretsmgr...`) for **both** environments, only
-  `trust-domains/<td>` differs (a `tiger-dev` typo gave AADSTS700211); secret names must match exactly
+- Lessons: the issuer host is the CyberArk tenant (`<tenant>.secretsmgr...`) for **both** environments, only
+  `trust-domains/<td>` differs (typing a different host for dev gave AADSTS700211); secret names must match exactly
   (`swa-dev-demo` missing gave 404). Tenant ID without Entra access: Key Vault Overview → Directory ID.
 
 ## Next steps
