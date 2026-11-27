@@ -1,5 +1,10 @@
 # SWA → Azure: workloads get Azure tokens with their SPIFFE identity (no client secret)
 
+![Workload identity federation: CyberArk Secure Workload Access to Microsoft Azure](docs/architecture.svg)
+
+<sub>PNG for slides / email: [docs/architecture.png](docs/architecture.png) · detailed lab diagram (names, ports,
+denied cases): [docs/architecture-lab.svg](docs/architecture-lab.svg)</sub>
+
 Lab for the CyberArk use case **"Authenticate workloads with SPIFFE → Azure"**
 ([CyberArk docs](https://docs.cyberark.com/secrets-manager-saas/latest/en/content/conjurcloud/ccl-swa-azure.htm)):
 a workload asks its local **SWA agent** for a JWT-SVID with audience `api://AzureADTokenExchange`, sends it to
@@ -19,10 +24,6 @@ Azure-adapted version, plus `swa-lab/azure/` (VM bootstrap, copy-to-VM, autostar
 
 ## 1. How it works
 
-![SWA to Microsoft Entra ID to Azure Key Vault](docs/architecture.svg)
-
-(PNG for slides / email: [docs/architecture.png](docs/architecture.png) · detailed lab version with all names, ports and
-denied cases: [docs/architecture-lab.svg](docs/architecture-lab.svg))
 
 ```text
  wl-<env> container (SWA lab)          SWA Server / tenant              Microsoft Entra ID              Azure Key Vault
