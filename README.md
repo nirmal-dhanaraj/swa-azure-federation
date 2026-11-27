@@ -1,6 +1,6 @@
 # SWA → Azure: workloads get Azure tokens with their SPIFFE identity (no client secret)
 
-![Workload identity federation: CyberArk Secure Workload Access to Microsoft Azure](docs/architecture.svg)
+![Workload identity federation: Idira Secure Workload Access to Microsoft Azure](docs/architecture.svg)
 
 <sub>PNG for slides / email: [docs/architecture.png](docs/architecture.png) · any-platform version:
 [docs/architecture-generic.svg](docs/architecture-generic.svg) · detailed lab diagram (names, ports, denied cases):
