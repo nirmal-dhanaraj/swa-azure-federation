@@ -19,6 +19,10 @@ Azure-adapted version, plus `swa-lab/azure/` (VM bootstrap, copy-to-VM, autostar
 
 ## 1. How it works
 
+![SWA to Microsoft Entra ID to Azure Key Vault](docs/architecture.svg)
+
+(PNG for slides / email: [docs/architecture.png](docs/architecture.png))
+
 ```text
  wl-<env> container (SWA lab)          SWA Server / tenant              Microsoft Entra ID              Azure Key Vault
  ----------------------------          -------------------              ------------------              ---------------
