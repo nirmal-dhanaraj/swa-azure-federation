@@ -1,0 +1,53 @@
+# lib.sh - shared helpers
+set -euo pipefail
+cd "$(dirname "$0")"
+[ -f ./config.env ] || { echo "ERROR: config.env missing -> cp config.env.example config.env and edit it" >&2; exit 1; }
+source ./config.env
+# Wrap env_load from config.env: stop early on names the tenant/agent would reject (e.g. a typo in BASE_DOMAIN / LAB_ID)
+eval "_cfg_env_load() $(declare -f env_load | tail -n +2)"
+env_load(){ _cfg_env_load "$@" || exit 1
+  [[ $TD =~ ^[a-z0-9]([a-z0-9._-]*[a-z0-9])?$ ]] || die "invalid trust domain '$TD' -> check BASE_DOMAIN / LAB_ID in config.env (lowercase letters, digits, . - _)"; }
+die(){ echo "ERROR: $*" >&2; exit 1; }
+# api METHOD PATH [JSON] -> sets BODY and CODE
+api(){
+  local m=$1 p=$2 d=${3:-} tok; [ -s "$ADMIN_TOKEN_FILE" ] || die "admin token missing/expired -> ./01-get-token.sh"
+  tok=$(tr -d '\n' < "$ADMIN_TOKEN_FILE")
+  local out; out=$(curl -sS -m 30 -w '\n%{http_code}' -X "$m" "$SWA_API_BASE/api/swa$p" \
+    -H "Authorization: Token token=\"$tok\"" -H 'Accept: application/x.secretsmgr.v2+json' -H 'Content-Type: application/json' ${d:+-d "$d"})
+  CODE=${out##*$'\n'}; BODY=${out%$'\n'*}
+  [ "$CODE" = 401 ] && die "admin token missing/expired -> ./01-get-token.sh"
+  return 0
+}
+# ok_or_exists: 2xx or 409 counts as success
+ok_or_exists(){ case "$CODE" in 2*) echo "  OK ($CODE)";; 409) echo "  already exists (409)";; *) echo "  HTTP $CODE: $BODY" >&2; return 1;; esac; }
+# ensure_client: build swa-go-test from source if the binary is missing (hash is needed by 10 and 30)
+ensure_client(){ [ -x "$SWA_CLIENT_BIN" ] || ./swa-go-test/build.sh; }
+# k3s helpers: the SWA Servers run in the k3s container $K3S_NAME (05-k3s-up.sh); kubectl/helm use $KUBECONFIG
+k3s(){ docker exec -i "$K3S_NAME" "$@"; }
+need_k3s(){
+  [ "$(docker inspect -f '{{.State.Running}}' "$K3S_NAME" 2>/dev/null)" = true ] || die "k3s container $K3S_NAME not running -> ./05-k3s-up.sh"
+  [ -s "$KUBECONFIG" ] || die "$KUBECONFIG missing -> ./05-k3s-up.sh"
+}
+# ensure_server_image: import the SWA Server image from the bundle tar into k3s containerd if missing (never pulled)
+ensure_server_image(){
+  resolve_server_image
+  k3s crictl inspecti "$SWA_SERVER_IMAGE" >/dev/null 2>&1 && return 0
+  [ -f "$SWA_SERVER_TAR" ] || die "$SWA_SERVER_TAR missing -> extract swa-release-v$SWA_VERSION.tgz to $SWA_BUNDLE_DIR"
+  echo "importing $SWA_SERVER_IMAGE into k3s from $SWA_SERVER_TAR"; k3s ctr -n k8s.io images import - < "$SWA_SERVER_TAR" >/dev/null
+  k3s crictl inspecti "$SWA_SERVER_IMAGE" >/dev/null 2>&1 || die "$SWA_SERVER_TAR did not provide $SWA_SERVER_IMAGE -> images in k3s: $(k3s crictl images -o json | jq -r '[.images[].repoTags[]?|select(test("swa"))]|join(", ")'); set SWA_SERVER_IMAGE in config.env"
+}
+# host_gw: address of the host as seen from a container on the default network (agents reach the server ports there)
+host_gw(){
+  [ -n "${HOST_GW:-}" ] && { echo "$HOST_GW"; return; }
+  [ "$(uname -s)" = Darwin ] && { echo host.docker.internal; return; }                                    # Docker Desktop
+  local g; g=$(docker network inspect bridge -f '{{range .IPAM.Config}}{{.Gateway}}{{end}}' 2>/dev/null || true)   # Docker
+  [ -n "$g" ] || g=$(docker network inspect podman -f '{{range .Subnets}}{{.Gateway}}{{end}}' 2>/dev/null || true) # podman (docker alias)
+  [ -n "$g" ] || die "cannot detect the container network gateway -> set HOST_GW in config.env"
+  echo "$g"
+}
+need_conjur(){ conjur whoami >/dev/null 2>&1 || die "conjur CLI not logged in (conjur login)"; }
+policy(){ # policy <branch> <yaml-string> : conjur policy update (create/modify, never deletes other records)
+  local f out rc; f=$(mktemp); printf '%s\n' "$2" > "$f"
+  out=$(conjur policy update -b "$1" -f "$f" 2>&1) && rc=0 || rc=$?; rm -f "$f"; echo "  [$1] ${out%%$'\n'*}"; return $rc; }
+# cstate <container>: running|exited|... or "missing" (docker inspect prints an empty line for unknown names)
+cstate(){ local s; s=$(docker inspect -f '{{.State.Status}}' "$1" 2>/dev/null | head -1); echo "${s:-missing}"; }

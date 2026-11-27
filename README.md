@@ -6,9 +6,17 @@ a workload asks its local **SWA agent** for a JWT-SVID with audience `api://Azur
 **Microsoft Entra ID** as a client assertion, and gets an Azure access token for a **user-assigned managed identity**
 through a **federated identity credential**. No Azure secret or certificate is stored anywhere.
 
-This repo is the Azure add-on to [swa-azure-lab](https://github.com/nirmal-dhanaraj/swa-azure-lab). That lab provides
-the SWA Servers, agents and workload containers (`wl-prod`, `wl-dev`). This repo only adds the Azure side and the
-token exchange. Deploy the SWA lab first (9/9 PASS), then this one on the **same VM**.
+The repo is self-contained, in two parts, both run on the **same Azure VM**:
+
+| Folder | What | Deploy |
+|---|---|---|
+| [`swa-lab/`](swa-lab/README.md) | The SWA lab: SWA Servers (k3s), agents and workload containers `wl-prod`, `wl-dev`. Azure-VM adaptation of [huydd79/test-swa-docker](https://github.com/huydd79/test-swa-docker) (same as `swa-azure-lab`) | first, until `./55-full-test.sh` = 9/9 PASS |
+| repo root | The Azure side: managed identities, federated credentials, Key Vault, token exchange | second (this README) |
+
+Every file of test-swa-docker that the workflow uses is in `swa-lab/` (scripts, `image/`, `swa-go-test/`), in the
+Azure-adapted version, plus `swa-lab/azure/` (VM bootstrap, copy-to-VM, autostart). Not copied: test-swa-docker's
+`docs/` (explainer web pages, see https://huydd79.github.io/test-swa-docker/). The original has no license: keep this
+repo private.
 
 ## 1. How it works
 
@@ -46,7 +54,8 @@ SWA lab, the names include it).
 
 ## 2. Prerequisites
 
-- The **SWA lab is deployed and running** on the Azure VM (`~/swa-azure-lab`, `./55-full-test.sh` = 9/9 PASS).
+- The **SWA lab in `swa-lab/` is deployed and running** on the Azure VM (follow [swa-lab/README.md](swa-lab/README.md)
+  section 3–4; `./55-full-test.sh` = 9/9 PASS). It needs the SWA bundle, the `conjur` CLI and your CyberArk tenant.
   Node group policy element 2 (`unix.path == "/opt/swa/bin/swa-agent"`) must still be there: this lab fetches the
   Azure JWT with the `swa-agent` CLI.
 - An Azure subscription where you can create a resource group, managed identities, a Key Vault and **role
@@ -58,11 +67,16 @@ SWA lab, the names include it).
 
 ## 3. Deploy (all on the Azure VM)
 
-### 3.1 Get the repo and the Azure CLI (once)
+### 3.0 Deploy the SWA lab (part 1)
 
 ```bash
 cd ~ && git clone https://github.com/nirmal-dhanaraj/swa-azure-federation.git
 ```
+
+Then follow [swa-lab/README.md](swa-lab/README.md) sections 4.2–4.4 inside `~/swa-azure-federation/swa-lab`
+(bootstrap, `config.env`, `conjur login`, `./01-get-token.sh`, deploy block) until 9/9 PASS.
+
+### 3.1 Get the Azure CLI (once)
 
 ```bash
 curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
@@ -123,6 +137,7 @@ Expected matrix (per environment, shown for prod):
 | `30-read-keyvault.sh <env> [secret]` | Read a Key Vault secret with the cached token (`SHOW=1` prints the value) |
 | `40-full-test.sh` | 12-case allow/deny matrix |
 | `99-cleanup.sh [env\|all]` | Remove one environment's identity, or the whole resource group (purges the Key Vault) |
+| `swa-lab/` | The SWA lab (from test-swa-docker, Azure-adapted); its own scripts and README |
 
 ## 5. Manual commands (what the scripts do)
 
