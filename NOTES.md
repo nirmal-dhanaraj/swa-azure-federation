@@ -28,7 +28,7 @@ the CyberArk page "Authenticate workloads with SPIFFE → Azure" (ccl-swa-azure.
 ## Open risks
 
 - `swa-lab/` is a copy: fixes made in swa-azure-lab must be copied here too (or stop using swa-azure-lab).
-- test-swa-docker has no license: keep this repo private.
+- test-swa-docker has no license; this repo was made public by choice (2026-11-27). If the author objects, remove `swa-lab/` or make the repo private.
 
 - **Issuer discovery**: assumed the issuer is the trust domain URL (`<tenant>/api/swa/trust-domains/<td>`, as the
   SWA lab's authn-jwt uses) and that it serves `/.well-known/openid-configuration` publicly. `00` checks; the scripts

@@ -15,8 +15,7 @@ The repo is self-contained, in two parts, both run on the **same Azure VM**:
 
 Every file of test-swa-docker that the workflow uses is in `swa-lab/` (scripts, `image/`, `swa-go-test/`), in the
 Azure-adapted version, plus `swa-lab/azure/` (VM bootstrap, copy-to-VM, autostart). Not copied: test-swa-docker's
-`docs/` (explainer web pages, see https://huydd79.github.io/test-swa-docker/). The original has no license: keep this
-repo private.
+`docs/` (explainer web pages, see https://huydd79.github.io/test-swa-docker/). The original has no license: credit to its author; ask them before reusing the code elsewhere.
 
 ## 1. How it works
 
